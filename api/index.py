@@ -5,13 +5,12 @@ from fastapi import FastAPI, HTTPException, Request
 app = FastAPI()
 
 DIALPAD_API_KEY = os.getenv("DIALPAD_API_KEY")
-TARGET_OFFICE_ID = "5927317992210432"
 
 def run_operator_check():
     if not DIALPAD_API_KEY:
         raise HTTPException(status_code=500, detail="DIALPAD_API_KEY missing")
 
-    url = f"url = "https://dialpad.com/api/v2/offices/5927317992210432/operators"
+    url = "https://dialpad.com/api/v2/offices/5927317992210432/operators"
     headers = {
         "Authorization": f"Bearer {DIALPAD_API_KEY}",
         "Accept": "application/json"
@@ -26,7 +25,6 @@ def run_operator_check():
         available_operators = []
 
         for user in users:
-            # Strict check: must be online AND not in Do Not Disturb
             if user.get("is_online") is True and user.get("do_not_disturb") is False:
                 available_operators.append({
                     "id": user.get("id"),
@@ -36,7 +34,7 @@ def run_operator_check():
         return {
             "has_available_operator": len(available_operators) > 0,
             "available_count": len(available_operators),
-            "first_available_name": available_operators["name"] if available_operators else "None"
+            "first_available_name": available_operators[0]["name"] if available_operators else "None"
         }
 
     except requests.exceptions.RequestException as e:
@@ -52,5 +50,3 @@ def check_operator():
 @app.api_route("/{full_path:path}", methods=["GET", "POST"])
 def catch_all(full_path: str, request: Request):
     return run_operator_check()
-
-
