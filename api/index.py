@@ -25,16 +25,22 @@ def run_operator_check():
         available_operators = []
 
         for user in users:
-            if user.get("is_online") is True and user.get("do_not_disturb") is False:
+            is_online = user.get("is_online") is True
+            is_dnd = user.get("do_not_disturb") is True
+
+            # Operator is available ONLY if online is True AND do_not_disturb is False
+            if is_online and not is_dnd:
                 available_operators.append({
                     "id": user.get("id"),
                     "name": user.get("display_name")
                 })
 
+        first_name = available_operators[0]["name"] if len(available_operators) > 0 else "None"
+
         return {
             "has_available_operator": len(available_operators) > 0,
             "available_count": len(available_operators),
-            "first_available_name": available_operators[0]["name"] if available_operators else "None"
+            "first_available_name": first_name
         }
 
     except requests.exceptions.RequestException as e:
@@ -50,3 +56,4 @@ def check_operator():
 @app.api_route("/{full_path:path}", methods=["GET", "POST"])
 def catch_all(full_path: str, request: Request):
     return run_operator_check()
+
