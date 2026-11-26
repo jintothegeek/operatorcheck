@@ -11,7 +11,7 @@ def run_operator_check():
     if not DIALPAD_API_KEY:
         raise HTTPException(status_code=500, detail="DIALPAD_API_KEY missing")
 
-    url = f"https://dialpad.com{TARGET_OFFICE_ID}/operators"
+    url = f"url = "https://dialpad.com/api/v2/offices/5927317992210432/operators"
     headers = {
         "Authorization": f"Bearer {DIALPAD_API_KEY}",
         "Accept": "application/json"
