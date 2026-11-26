@@ -23,13 +23,22 @@ def run_operator_check():
 
         users = data.get("users", [])
         available_operators = []
+        debug_users = []
 
         for user in users:
             is_online = user.get("is_online") is True
-            is_dnd = user.get("do_not_disturb") is True
+            user_dnd = user.get("do_not_disturb") is True
 
-            # Operator is available ONLY if online is True AND do_not_disturb is False
-            if is_online and not is_dnd:
+            debug_users.append({
+                "name": user.get("display_name"),
+                "is_online": user.get("is_online"),
+                "do_not_disturb": user.get("do_not_disturb"),
+                "is_available": user.get("is_available"),
+                "on_duty_status": user.get("on_duty_status")
+            })
+
+            # Checks strictly user-level is_online and user-level do_not_disturb
+            if is_online and not user_dnd:
                 available_operators.append({
                     "id": user.get("id"),
                     "name": user.get("display_name")
@@ -40,7 +49,8 @@ def run_operator_check():
         return {
             "has_available_operator": len(available_operators) > 0,
             "available_count": len(available_operators),
-            "first_available_name": first_name
+            "first_available_name": first_name,
+            "debug_users": debug_users
         }
 
     except requests.exceptions.RequestException as e:
@@ -56,4 +66,3 @@ def check_operator():
 @app.api_route("/{full_path:path}", methods=["GET", "POST"])
 def catch_all(full_path: str, request: Request):
     return run_operator_check()
-
