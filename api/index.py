@@ -4,7 +4,7 @@ from fastapi import FastAPI, HTTPException
 
 app = FastAPI()
 
-DIALPAD_API_KEY = os.getenv("DIALPAD_API_KEY")
+DIALPAD_API_KEY = os.getenv("E5eF2HYQZ3TMAnGH8AZZj3narhWJb9rkJSsTuRVsTgAG2bMhJ99kZXkNskYfX3QBdZdraYYfKUs3xG4HJk3hTjsh5xc6NnnTZGYC")
 
 @app.api_route("/check-operator", methods=["GET", "POST"])
 def check_operator():
@@ -12,7 +12,7 @@ def check_operator():
         raise HTTPException(status_code=500, detail="DIALPAD_API_KEY missing")
 
     response = requests.get(
-        "https://dialpad.com",
+        "https://dialpad.com/api/v2/offices/5927317992210432/operators",
         headers={
             "Authorization": f"Bearer {DIALPAD_API_KEY}",
             "Accept": "application/json"
